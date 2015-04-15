@@ -253,10 +253,11 @@ compute.flux <- function (alpha.df, final.umol.unlab, uptake.rates, growth.integ
 }
 
 # saves plots generated in above functions
-save.plots <- function (growth.plot, aa.lab.plot, uptake.plot, prot.flux.plot, comp.uptake.plot) {
+save.plots <- function (growth.plot, aa.lab.plot, uptake.plot, prot.flux.plot, comp.uptake.plot, 
+                        directory="../figures/", file_handle="choose_filename") {
   # save growth plot
   ggsave(
-    paste("../figures/", file_handle, "_growth_plot.pdf", sep=""),
+    paste(directory, file_handle, "_growth_plot.pdf", sep=""),
     growth.plot,
     width=8,height=6,units="cm",
     dpi=300
@@ -264,7 +265,7 @@ save.plots <- function (growth.plot, aa.lab.plot, uptake.plot, prot.flux.plot, c
   
   # save amino acid labeling plot
   ggsave(
-    paste("../figures/", file_handle, "_aa_lab_plot.pdf", sep=""),
+    paste(directory, file_handle, "_aa_lab_plot.pdf", sep=""),
     aa.lab.plot,
     width=12,height=14,units="cm",
     dpi=300
@@ -272,7 +273,7 @@ save.plots <- function (growth.plot, aa.lab.plot, uptake.plot, prot.flux.plot, c
   
   # save amino acid uptake (from medium) plot
   ggsave(
-    paste("../figures/", file_handle, "_aa_uptake_plot.pdf", sep=""),
+    paste(directory, file_handle, "_aa_uptake_plot.pdf", sep=""),
     uptake.plot,
     width=16,height=6,units="cm",
     dpi=300
@@ -280,7 +281,7 @@ save.plots <- function (growth.plot, aa.lab.plot, uptake.plot, prot.flux.plot, c
   
   # save protein uptake flux plot
   ggsave(
-    paste("../figures/", file_handle, "_prot_uptake_flux_plot.pdf", sep=""),
+    paste(directory, file_handle, "_prot_uptake_flux_plot.pdf", sep=""),
     prot.flux.plot,
     width=12,height=6,units="cm",
     dpi=300
@@ -288,7 +289,7 @@ save.plots <- function (growth.plot, aa.lab.plot, uptake.plot, prot.flux.plot, c
   
   # save plot comparing aa influx from medium and aa influx from protein catabolism
   ggsave(
-    paste("../figures/", file_handle, "_compare_aa_uptake_plot.pdf", sep=""),
+    paste(directory, file_handle, "_compare_aa_uptake_plot.pdf", sep=""),
     comp.uptake.plot,
     width=14,height=6,units="cm",
     dpi=300

@@ -1,4 +1,20 @@
-# setwd("/Users/Michel/Desktop/Research/code/")
+setwd("/Users/Michel/Desktop/Research/code/")
+source("ProtScavFluxCalculation/MFA_schematic_colors.R")
+
+scav.plot.colors <- data.frame(aa = c("lysine","phenylalanine","threonine","tyrosine","valine"),
+                               AA = c("Lysine","Phenylalanine","Threonine","Tyrosine","Valine"),
+                               line_colors = c(green_outside, red_outside, blue_outside, "orange3", purple_outside),
+                               fill_colors = c(green_inside, red_inside, blue_inside, "orange1", purple_inside),
+                               shape = c(22,21,24,25,23))
+
+# function for generating list of fill colors which will be alternated with no fill (i.e. white) for comparison of flux plots
+alternate.white.and.fill <- function (cols) {
+  ret <- c()
+  for (col in cols) {
+    ret <- c(ret, "white", col)
+  }
+  ret
+}
 
 # inputs needed: aa.lab.list
 # dat <- aa.lab.list$data # %>% filter(compound %in% aas.toPlot)
@@ -15,15 +31,19 @@ aa.lab.plotter <- function (aa, dat, preds, save=FALSE, directory="ProtScavFluxC
   aa.lab.media <- dat.toplot %>% filter(loc == "Extracellular")
   aa.preds.media <- preds.toplot %>% filter(loc == "Extracellular") 
   
-  if (aa == "lysine") {
-    col = green_outside; shape.num = 22;
-  } else if (aa == "phenylalanine") {
-    col = red_outside; shape.num = 21;
-  } else if (aa == "threonine") {
-    col = blue_outside; shape.num = 24;
-  } else if (aa == "valine") {
-    col = purple_outside; shape.num = 23;
-  } 
+  col.df <- scav.plot.colors %>% filter(aa = aa)
+  col = col.df$line_colors
+  shape.num = col.df$shape
+  
+  # if (aa == "lysine") {
+  #   col = green_outside; shape.num = 22;
+  # } else if (aa == "phenylalanine") {
+  #   col = red_outside; shape.num = 21;
+  # } else if (aa == "threonine") {
+  #   col = blue_outside; shape.num = 24;
+  # } else if (aa == "valine") {
+  #   col = purple_outside; shape.num = 23;
+  # } 
   
   ret <- list()
   aa.lab.intra.plot <- ggplot(aa.lab.intra %>% filter(compound == aa), aes(x=time.pt, y=frac)) + 
@@ -70,10 +90,12 @@ aa.lab.sample.plot <- ggplot(aa.lab.intra, aes(x=time.pt, y=frac, color=compound
 
 ProtScavFlux.plotter <- function(fluxes.toPlot, 
                                  save=FALSE, directory="ProtScavFluxCalculation/Figures/", filename="choose_filename") {
+  col.df <- scav.plot.colors %>% filter(aa %in% fluxes.toPlot$compound)
+
   umol.uptakePlot <- ggplot(fluxes.toPlot, aes(x=compound, y=umol.protein.flux*10^6, fill=compound)) + 
     geom_bar(stat="identity", position="dodge", color="black", width=0.8) + 
-    scale_fill_manual(values=c(green_outside, red_outside, blue_outside, "orange3", purple_outside)) +
-    scale_x_discrete(labels=c("Lysine","Phenylalanine","Threonine","Tyrosine","Valine")) + 
+    scale_fill_manual(values=col.df$line_colors) +
+    scale_x_discrete(labels=col.df$AA) + 
     geom_abline(height=0, slope=0) + 
     theme(axis.text.x=element_text(size=8, angle=45,hjust=1),
           axis.title.y=element_text(size=8)) + 
@@ -86,7 +108,9 @@ ProtScavFlux.plotter <- function(fluxes.toPlot,
   umol.uptakePlot
 }
 
-# EXAMPLE: 
+
+# EXAMPLES: 
+# ProtScavFlux.plotter(fluxes.toPlot %>% filter(compound %in% c(AAtoplot, "valine")))
 # ProtScavFlux.plotter(fluxes.toPlot, save=TRUE,
 #                directory="ProtScavFluxCalculation/Figures/BMK_White_Lab/", filename="BMK_Ras_LabPlot")
 
@@ -95,6 +119,8 @@ ProtScavFlux.plotter <- function(fluxes.toPlot,
 
 FluxComparison.Plotter <- function(fluxes.toPlot, normTo1=TRUE,
                                    save=FALSE, directory="ProtScavFluxCalculation/Figures/", filename="choose_filename") {
+  col.df <- scav.plot.colors %>% filter(aa %in% fluxes.toPlot$compound)
+  
   fluxes.toCompare <- fluxes.toPlot %>% gather(entryRoute, aa.flux, resulting.aa.flux, uptake.rate) %>% 
     select(compound, entryRoute, aa.flux) %>% 
     mutate(comp_entryRoute = paste(compound, entryRoute, sep="_")) %>%
@@ -103,10 +129,9 @@ FluxComparison.Plotter <- function(fluxes.toPlot, normTo1=TRUE,
   if (normTo1) {
     compareFlux.plot <- ggplot(fluxes.toCompare, aes(x=compound, y=norm.flux, color=compound, fill=comp_entryRoute)) + 
       geom_bar(stat="identity", width=0.8) + geom_abline(height=0, slope=0) + 
-      scale_color_manual(values=c(green_outside, red_outside, blue_outside, "orange3", purple_outside)) +
-      scale_fill_manual(values=c("white",green_inside,"white",red_inside,"white",blue_inside,"white",
-                                 "orange1","white",purple_inside)) +
-      scale_x_discrete(labels=c("Lysine","Phenylalanine","Threonine","Tyrosine","Valine")) + 
+      scale_color_manual(values=col.df$line_colors) +
+      scale_fill_manual(values=alternate.white.and.fill(col.df$fill_colors)) +
+      scale_x_discrete(labels=col.df$AA) + 
       theme(axis.text.x=element_text(size=8, angle=45,hjust=1), axis.title.y=element_text(size=8)) + 
       xlab("") + ylab("Fractional\nAmino Acid Uptake")
     
@@ -117,10 +142,9 @@ FluxComparison.Plotter <- function(fluxes.toPlot, normTo1=TRUE,
   } else {
     compareFlux.plot <- ggplot(fluxes.toCompare, aes(x=compound, y=aa.flux*1000, color=compound, fill=comp_entryRoute)) + 
       geom_bar(stat="identity", width=0.8) + geom_abline(height=0, slope=0) + 
-      scale_color_manual(values=c(green_outside, red_outside, blue_outside, "orange3", purple_outside)) +
-      scale_fill_manual(values=c("white",green_inside,"white",red_inside,"white",blue_inside,"white",
-                                 "orange1","white",purple_inside)) +
-      scale_x_discrete(labels=c("Lysine","Phenylalanine","Threonine","Tyrosine","Valine")) + 
+      scale_color_manual(values=col.df$line_colors) +
+      scale_fill_manual(values=alternate.white.and.fill(col.df$fill_colors)) +
+      scale_x_discrete(labels=col.df$AA) + 
       theme(axis.text.x=element_text(size=8, angle=45,hjust=1), axis.title.y=element_text(size=8)) + 
       xlab("") + ylab("Amino Acid Uptake\n(nmol / uL cell / hr)")
     
@@ -132,7 +156,10 @@ FluxComparison.Plotter <- function(fluxes.toPlot, normTo1=TRUE,
   compareFlux.plot
 }
 
-# EXAMPLE: 
+FluxComparison.Plotter(fluxes.toPlot %>% filter(compound %in% c("valine", AAtoplot)), normTo1 = TRUE)
+
+# EXAMPLES: 
+# FluxComparison.Plotter(fluxes.toPlot %>% filter(compound %in% c(AAtoplot, "tyrosine","valine")))
 # FluxComparison.Plotter(fluxes.toPlot, normTo1=FALSE, save=TRUE,
 #                        directory="ProtScavFluxCalculation/Figures/BMK_White_Lab/", filename="BMK_Ras_LabPlot")
 # FluxComparison.Plotter(fluxes.toPlot, normTo1=TRUE, save=TRUE,

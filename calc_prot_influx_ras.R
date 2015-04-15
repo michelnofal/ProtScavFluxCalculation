@@ -55,14 +55,29 @@ integral.prod.curves <- integrate.prod.exponentials(growth.list$curve.params, gr
 alpha.df <- data.frame(compound = c("lysine","phenylalanine","threonine","tyrosine","valine"), alpha = c(59, 27, 33, 20, 36))
 fluxes.list <- compute.flux(alpha.df, final.umol.unlab, uptake.list$uptake.rates, growth.list$integrals, integral.prod.curves)
 
-save.plots(growth.list$plot, aa.lab.list$plots, uptake.list$plot, fluxes.list$plot.fluxes, fluxes.list$plot.compare)
+showQuickPlots = FALSE
+saveQuickPlots = FALSE
+saveRData = FALSE
 
-growth.list$plot
-aa.lab.list$plots
-uptake.list$plot
-fluxes.list$plot.fluxes
-fluxes.list$plot.compare
+# showQuickPlots = TRUE
+if (showQuickPlots) {
+  growth.list$plot
+  aa.lab.list$plots
+  uptake.list$plot
+  fluxes.list$plot.fluxes
+  fluxes.list$plot.compare
+}
 
-Ras1_fluxes <- fluxes.list$fluxes
-Ras1_fluxes$data = "BMK_Ras_1"
-save(Ras1_fluxes, file=paste(data_folder,"R_data/Ras1_fluxes.Rda",sep=""))
+# saveQuickPlots = TRUE
+if (saveQuickPlots) {
+  save.plots(growth.list$plot, aa.lab.list$plots, uptake.list$plot, fluxes.list$plot.fluxes, fluxes.list$plot.compare, 
+             directory="ProtScavFluxCalculation/Figures/Quick_plots/", file_handle=file_handle)
+}
+
+# saveRData = TRUE
+if (saveRData) {
+  Ras1_fluxes <- fluxes.list$fluxes
+  Ras1_fluxes$data = "BMK_Ras_1"
+  save(Ras1_fluxes, file=paste(data_folder,"R_data/Ras1_fluxes.Rda",sep=""))
+}
+

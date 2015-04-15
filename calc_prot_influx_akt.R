@@ -6,27 +6,23 @@ library(broom)
 library(tidyr)
 options(stringsAsFactors = FALSE)
 
-# setwd("/Users/Michel/Desktop/Research/CRISPR screen/")
-# source("code/useful R/libraries_and_themes_1_1025.R")
+setwd("/Users/Michel/Desktop/Research/code/")
+source("mn_common/libraries_and_themes_jan15.R")
 theme_set(figure_theme)
-setwd("/Users/Michel/Desktop/Research/MFA/code/")
-source("protein_influx_functions_v3.R")
+source("ProtScavFluxCalculation/protein_influx_functions_v3.R")
 
 file_handle <- "Akt_timecourse1"
+data_folder <- "ProtScavFluxCalculation/Data/BMK_White_Lab/"
 
 # import growth data
-growth.dat <- read.table("../data/D3RasAkt_timecourse/D3RasAkt_data/input files/Akt_pcv_data.csv", header=TRUE, sep=",")
-# import intracellular data
-intra.dat <- read.table("../data/D3RasAkt_timecourse/D3RasAkt_data/input files/Akt_IC_data.csv", header=TRUE, sep=",")
-# import extracellular data
-extra.dat <- read.table("../data/D3RasAkt_timecourse/D3RasAkt_data/input files/Akt_media_data.csv", header=TRUE, sep=",")
-# how many mLs of medium were added during the timecourse?
-num_mLs <- 2
-# at what fraction of DMEM concentration are amino acids present?
-media_perc <- 40
-
+growth.dat <- read.table("ProtScavFluxCalculation/Data/BMK_White_Lab/BMK_Akt/Akt_pcv_data.csv", header=TRUE, sep=",")
+intra.dat <- read.table("ProtScavFluxCalculation/Data/BMK_White_Lab/BMK_Akt/Akt_IC_data.csv", header=TRUE, sep=",")
+extra.dat <- read.table("ProtScavFluxCalculation/Data/BMK_White_Lab/BMK_Akt/Akt_media_data.csv", header=TRUE, sep=",")
 extra.dat$time.pt[extra.dat$time.pt == "fresh"] <- 0
 extra.dat$time.pt <- as.numeric(extra.dat$time.pt)
+
+num_mLs <- 2
+media_perc <- 40
 
 # 1 - calculate growth predictions
 # 2 - calculate fitted growth curve parameters
@@ -57,14 +53,30 @@ integral.prod.curves <- integrate.prod.exponentials(growth.list$curve.params, gr
 alpha.df <- data.frame(compound = c("lysine","phenylalanine","threonine","tyrosine","valine"), alpha = c(59, 27, 33, 20, 36))
 fluxes.list <- compute.flux(alpha.df, final.umol.unlab, uptake.list$uptake.rates, growth.list$integrals, integral.prod.curves)
 
-save.plots(growth.list$plot, aa.lab.list$plots, uptake.list$plot, fluxes.list$plot.fluxes, fluxes.list$plot.compare)
+showQuickPlots = FALSE
+saveQuickPlots = FALSE
+saveRData = FALSE
 
-growth.list$plot
-aa.lab.list$plots
-uptake.list$plot
-fluxes.list$plot.fluxes
-fluxes.list$plot.compare
+# showQuickPlots = TRUE
+if (showQuickPlots) {
+  growth.list$plot
+  aa.lab.list$plots
+  uptake.list$plot
+  fluxes.list$plot.fluxes
+  fluxes.list$plot.compare
+}
 
-Akt1_fluxes <- fluxes.list$fluxes
-Akt1_fluxes$data = "BMK_Akt_1"
-# save(Akt1_fluxes, file="Akt1_fluxes.Rda")
+# saveQuickPlots = TRUE
+if (saveQuickPlots) {
+  save.plots(growth.list$plot, aa.lab.list$plots, uptake.list$plot, fluxes.list$plot.fluxes, fluxes.list$plot.compare, 
+             directory="ProtScavFluxCalculation/Figures/Quick_plots/", file_handle=file_handle)
+}
+
+# saveRData = TRUE
+if (saveRData) {
+  Akt1_fluxes <- fluxes.list$fluxes
+  Akt1_fluxes$data = "BMK_Akt_1"
+  save(Akt1_fluxes, file=paste(data_folder,"R_data/Akt1_fluxes.Rda",sep=""))
+}
+
+
