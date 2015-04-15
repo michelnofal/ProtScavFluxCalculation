@@ -1,3 +1,13 @@
+library(ggplot2)
+library(dplyr)
+library(broom)
+library(tidyr)
+
+# do i need all of these??
+
+#library(data.table)
+#library(reshape2)
+
 ##########################
 #### HELPER FUNCTIONS ####
 ##########################
