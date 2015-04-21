@@ -1,7 +1,7 @@
 setwd("/Users/Michel/Desktop/Research/code/")
 source("ProtScavFluxCalculation/MFA_schematic_colors.R")
 
-scav.plot.colors <- data.frame(aa = c("lysine","phenylalanine","threonine","tyrosine","valine"),
+scav.plot.colors <- data.frame(amino.acid = c("lysine","phenylalanine","threonine","tyrosine","valine"),
                                AA = c("Lysine","Phenylalanine","Threonine","Tyrosine","Valine"),
                                line_colors = c(green_outside, red_outside, blue_outside, "orange3", purple_outside),
                                fill_colors = c(green_inside, red_inside, blue_inside, "orange1", purple_inside),
@@ -31,7 +31,7 @@ aa.lab.plotter <- function (aa, dat, preds, save=FALSE, directory="ProtScavFluxC
   aa.lab.media <- dat.toplot %>% filter(loc == "Extracellular")
   aa.preds.media <- preds.toplot %>% filter(loc == "Extracellular") 
   
-  col.df <- scav.plot.colors %>% filter(aa = aa)
+  col.df <- scav.plot.colors %>% filter(amino.acid == aa)
   col = col.df$line_colors
   shape.num = col.df$shape
   
@@ -90,7 +90,7 @@ aa.lab.sample.plot <- ggplot(aa.lab.intra, aes(x=time.pt, y=frac, color=compound
 
 ProtScavFlux.plotter <- function(fluxes.toPlot, 
                                  save=FALSE, directory="ProtScavFluxCalculation/Figures/", filename="choose_filename") {
-  col.df <- scav.plot.colors %>% filter(aa %in% fluxes.toPlot$compound)
+  col.df <- scav.plot.colors %>% filter(amino.acid %in% fluxes.toPlot$compound)
 
   umol.uptakePlot <- ggplot(fluxes.toPlot, aes(x=compound, y=umol.protein.flux*10^6, fill=compound)) + 
     geom_bar(stat="identity", position="dodge", color="black", width=0.8) + 
@@ -119,7 +119,7 @@ ProtScavFlux.plotter <- function(fluxes.toPlot,
 
 FluxComparison.Plotter <- function(fluxes.toPlot, normTo1=TRUE,
                                    save=FALSE, directory="ProtScavFluxCalculation/Figures/", filename="choose_filename") {
-  col.df <- scav.plot.colors %>% filter(aa %in% fluxes.toPlot$compound)
+  col.df <- scav.plot.colors %>% filter(amino.acid %in% fluxes.toPlot$compound)
   
   fluxes.toCompare <- fluxes.toPlot %>% gather(entryRoute, aa.flux, resulting.aa.flux, uptake.rate) %>% 
     select(compound, entryRoute, aa.flux) %>% 
@@ -155,8 +155,6 @@ FluxComparison.Plotter <- function(fluxes.toPlot, normTo1=TRUE,
   }
   compareFlux.plot
 }
-
-FluxComparison.Plotter(fluxes.toPlot %>% filter(compound %in% c("valine", AAtoplot)), normTo1 = TRUE)
 
 # EXAMPLES: 
 # FluxComparison.Plotter(fluxes.toPlot %>% filter(compound %in% c(AAtoplot, "tyrosine","valine")))

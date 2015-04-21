@@ -12,6 +12,7 @@ setwd("/Users/Michel/Desktop/Research/code/")
 source("mn_common/libraries_and_themes_jan15.R")
 theme_set(figure_theme)
 source("ProtScavFluxCalculation/protein_influx_functions_v3.R")
+source("ProtScavFluxCalculation/protein_influx_clean_plots.R")
 
 file_handle <- "Ras_timecourse1"
 data_folder <- "ProtScavFluxCalculation/Data/BMK_White_Lab/"
@@ -78,6 +79,33 @@ if (saveQuickPlots) {
 if (saveRData) {
   Ras1_fluxes <- fluxes.list$fluxes
   Ras1_fluxes$data = "BMK_Ras_1"
-  save(Ras1_fluxes, file=paste(data_folder,"R_data/Ras1_fluxes.Rda",sep=""))
+  Ras1_AAlab <- aa.lab.list
+  save(Ras1_fluxes, Ras1_AAlab, file=paste(data_folder,"R_data/Ras1_fluxes.Rda",sep=""))
+}
+
+##########
+# saving clean plots
+
+saveCleanPlots = FALSE
+
+# saveCleanPlots = TRUE
+if (saveCleanPlots) {
+  aa.lab.plotter(aa = "lysine", dat = aa.lab.list$data, preds = aa.lab.list$preds, save=TRUE,
+                 directory="ProtScavFluxCalculation/Figures/BMK_White_Lab/amino.acid.lab.plots/", filename="BMK_Ras_LabPlot")
+  aa.lab.plotter(aa = "threonine", dat = aa.lab.list$data, preds = aa.lab.list$preds, save=TRUE,
+                 directory="ProtScavFluxCalculation/Figures/BMK_White_Lab/amino.acid.lab.plots/", filename="BMK_Ras_LabPlot")
+  aa.lab.plotter(aa = "phenylalanine", dat = aa.lab.list$data, preds = aa.lab.list$preds, save=TRUE,
+                 directory="ProtScavFluxCalculation/Figures/BMK_White_Lab/amino.acid.lab.plots/", filename="BMK_Ras_LabPlot")
+  aa.lab.plotter(aa = "valine", dat = aa.lab.list$data, preds = aa.lab.list$preds, save=TRUE,
+                 directory="ProtScavFluxCalculation/Figures/BMK_White_Lab/amino.acid.lab.plots/", filename="BMK_Ras_LabPlot")
+  
+  ProtScavFlux.plotter(Ras1_fluxes %>% filter(compound != "tyrosine"), save=TRUE,
+                       directory="ProtScavFluxCalculation/Figures/BMK_White_Lab/", filename="BMK_Ras_LabPlot_noTyr")
+  
+  FluxComparison.Plotter(Ras1_fluxes %>% filter(compound != "tyrosine"), normTo1=FALSE, save=TRUE,
+                         directory="ProtScavFluxCalculation/Figures/BMK_White_Lab/", filename="BMK_Ras_LabPlot_noTyr")
+  FluxComparison.Plotter(Ras1_fluxes %>% filter(compound != "tyrosine"), normTo1=TRUE, save=TRUE,
+                         directory="ProtScavFluxCalculation/Figures/BMK_White_Lab/", filename="BMK_Ras_LabPlot_noTyr")
+                         
 }
 
