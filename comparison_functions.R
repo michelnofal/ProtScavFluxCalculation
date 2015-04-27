@@ -45,7 +45,6 @@ Compare_Timecourses_and_Fluxes <- function(multi_expt_fluxes, AAs, expt_labels, 
                                    save=FALSE, directory="ProtScavFluxCalculation/Figures/", filename="choose_filename") {
   col.df <- scav.plot.colors %>% filter(aa %in% multi_expt_fluxes$compound)
   
-  multi_expt_fluxes <- D3_Akt_Ras_fluxes
   multi_expt_fluxes <- multi_expt_fluxes %>% filter(compound %in% AAs)
   
   multi.fluxes.toCompare <- multi_expt_fluxes %>% group_by(data) %>% 
