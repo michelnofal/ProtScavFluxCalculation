@@ -109,3 +109,7 @@ if (saveCleanPlots) {
                          directory="ProtScavFluxCalculation/Figures/HOPS complex/", filename="HOPS1_Intergenic_LabPlot")
   
 }
+
+ProtScavFlux.plotter(HOPS1_intergenic_fluxes %>% filter(compound != "tyrosine"), save=FALSE)
+FluxComparison.Plotter(HOPS1_intergenic_fluxes, normTo1=FALSE, save=FALSE)
+FluxComparison.Plotter(HOPS1_intergenic_fluxes, normTo1=TRUE, save=FALSE)

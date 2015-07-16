@@ -77,9 +77,9 @@ aa.lab.plotter <- function (aa, dat, preds, save=FALSE, directory="ProtScavFluxC
 
 
 # TO SAVE LEGEND
-aa.lab.sample.plot <- ggplot(aa.lab.intra, aes(x=time.pt, y=frac, color=compound, shape=compound)) + 
-  geom_point(size=1.75) + scale_color_manual(values=c(green_outside, red_outside, blue_outside, purple_outside, "orange3")) +
-  scale_shape_manual(values=c(22,21,24,23,25))
+# aa.lab.sample.plot <- ggplot(aa.lab.intra, aes(x=time.pt, y=frac, color=compound, shape=compound)) + 
+#   geom_point(size=1.75) + scale_color_manual(values=c(green_outside, red_outside, blue_outside, purple_outside, "orange3")) +
+#   scale_shape_manual(values=c(22,21,24,23,25))
 
 # pdf(file="../figures/Ras_timecourse_cleanFigs/geom_point_legend.pdf")
 # legend_plotter(aa.lab.sample.plot)

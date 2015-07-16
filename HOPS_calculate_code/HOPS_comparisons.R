@@ -1,7 +1,8 @@
 theme_set(figure_theme)
-setwd("/Users/Michel/Desktop/Research/MFA/code/")
+setwd("/Users/Michel/Desktop/Research/code/")
 
 source("ProtScavFluxCalculation/comparison_functions.R")
+source("ProtScavFluxCalculation/protein_influx_clean_plots.R")
 
 load(file="ProtScavFluxCalculation/Data/KRPCA_dropout_comparison/R_data/KRPCA_DB_fluxes.Rda")
 load(file="ProtScavFluxCalculation/Data/HOPS complex/R_data/HOPS1_intergenic_fluxes.Rda")
@@ -20,9 +21,6 @@ ProtScav.Comparison.plotter(HOPS_fluxes, AAs = c(AAtoplot), expt_labels = HOPS_f
 
 Compare_Timecourses_and_Fluxes(HOPS_fluxes, AAs = c(AAtoplot), expt_labels=HOPS_fluxes_labels, normTo1 = FALSE,
                                save=TRUE, directory="ProtScavFluxCalculation/Figures/HOPS complex/", filename="HOPS_comparison")
-
-Compare_Timecourses_and_Fluxes(HOPS_fluxes, AAs= c(AAtoplot, "tyrosine", "valine"), expt_labels=HOPS_fluxes_labels, normTo1 = FALSE,
-                               save=FALSE, directory="ProtScavFluxCalculation/Figures/HOPS complex/", filename="HOPS_comparison")
 
 HOPS_summ <- HOPS_fluxes %>% filter(compound != "tyrosine") %>% group_by(data) %>% summarize(median = median(umol.protein.flux))
 

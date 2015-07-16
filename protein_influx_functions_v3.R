@@ -68,7 +68,8 @@ aa.labeller <- function(variable, value) {
                    'phenylalanine'="Phenylalanine",
                    'threonine'="Threonine",
                    'tyrosine'="Tyrosine",
-                   'valine'="Valine")
+                   'valine'="Valine",
+                   'histidine'="Histidine")
   return(aa.names[value]) 
 }
 
@@ -209,6 +210,21 @@ get.final.umol.unlab <- function(aa_table, aa.dt, num_mLs) {
 # calculate integral of product of exponentials describing growth rate and amino acid labeling
 integrate.prod.exponentials <- function (growth.curve.params, growth.max, aa.params) {
   growth.dt <- growth.curve.params %>% mutate(max = growth.max)
+  intra.params <- aa.params %>% filter(loc == "Intracellular")
+  intra.params <- intra.params %>% mutate(aa.intercept = intercept, aa.slope = rate) %>% 
+    select(compound, aa.intercept, aa.slope)
+  integrals <- merge(intra.params, growth.dt)
+  integrals$integral.prods <- apply(integrals, 1, function (x) {
+    do.integral.product.exponentials(x['aa.intercept'], x['aa.slope'], x['intercept'], x['rate'], x['max']) } )
+  integrals <- integrals %>% select(compound, integral.prods)
+  
+  return(integrals)
+}
+
+# calculate integral of product of exponentials describing growth rate and amino acid labeling
+integrate.prod.exponentials.2 <- function (growth.curve.params, aa.params) {
+  growth.max <- as.numeric(growth.curve.params$max[1])
+  growth.dt <- growth.curve.params %>% select(intercept, rate) %>% mutate(max = growth.max)
   intra.params <- aa.params %>% filter(loc == "Intracellular")
   intra.params <- intra.params %>% mutate(aa.intercept = intercept, aa.slope = rate) %>% 
     select(compound, aa.intercept, aa.slope)
