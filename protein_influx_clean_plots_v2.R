@@ -96,7 +96,7 @@ ProtScavFlux.plotter <- function(fluxes.toPlot,
     geom_bar(stat="identity", position="dodge", color="black", width=0.8) + 
     scale_fill_manual(values=col.df$line_colors) +
     scale_x_discrete(labels=col.df$AA) + 
-    geom_abline(height=0, slope=0) + 
+    geom_abline(slope=0) + 
     theme(axis.text.x=element_text(size=8, angle=45,hjust=1),
           axis.title.y=element_text(size=8)) + 
     xlab("") + ylab("Scavenging Flux\n(pmol / uL cell / hr)")
@@ -128,7 +128,7 @@ FluxComparison.Plotter <- function(fluxes.toPlot, normTo1=TRUE,
     mutate(norm.flux = aa.flux/sum(aa.flux))  
   if (normTo1) {
     compareFlux.plot <- ggplot(fluxes.toCompare, aes(x=compound, y=norm.flux, color=compound, fill=comp_entryRoute)) + 
-      geom_bar(stat="identity", width=0.8) + geom_abline(height=0, slope=0) + 
+      geom_bar(stat="identity", width=0.8) + geom_abline(slope=0) + 
       scale_color_manual(values=col.df$line_colors) +
       scale_fill_manual(values=alternate.white.and.fill(col.df$fill_colors)) +
       scale_x_discrete(labels=col.df$AA) + 
@@ -141,7 +141,7 @@ FluxComparison.Plotter <- function(fluxes.toPlot, normTo1=TRUE,
     }
   } else {
     compareFlux.plot <- ggplot(fluxes.toCompare, aes(x=compound, y=aa.flux*1000, color=compound, fill=comp_entryRoute)) + 
-      geom_bar(stat="identity", width=0.8) + geom_abline(height=0, slope=0) + 
+      geom_bar(stat="identity", width=0.8) + geom_abline(slope=0) + 
       scale_color_manual(values=col.df$line_colors) +
       scale_fill_manual(values=alternate.white.and.fill(col.df$fill_colors)) +
       scale_x_discrete(labels=col.df$AA) + 
